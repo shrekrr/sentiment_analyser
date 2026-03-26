@@ -20,5 +20,5 @@ EXPOSE 8000
 # Set environment variable gracefully
 ENV MODEL_CHECKPOINT="checkpoints/full_model_best.pt"
 
-# Run Gunicorn with Uvicorn workers for asynchronous production
-CMD ["gunicorn", "frontend.app:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "120"]
+# Run Gunicorn with Uvicorn workers, parsing Render's dynamic $PORT environment variable
+CMD gunicorn frontend.app:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 120
