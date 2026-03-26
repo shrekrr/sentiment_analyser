@@ -10,11 +10,14 @@ class SentimentInference:
         self.tokenizer = DistilBertTokenizerFast.from_pretrained("distilbert-base-uncased")
         
         self.model = MultiTaskSentimentModel()
-        if checkpoint_path:
+        import os
+        if checkpoint_path and os.path.exists(checkpoint_path):
             if torch.cuda.is_available():
                 self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device))
             else:
                 self.model.load_state_dict(torch.load(checkpoint_path, map_location=torch.device('cpu')))
+        elif checkpoint_path:
+            print(f"WARNING: Checkpoint missing at {checkpoint_path}! Using raw base model weights for inference.")
             
         self.model.to(self.device)
         self.model.eval()
