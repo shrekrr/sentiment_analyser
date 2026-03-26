@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What does your text feel?</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+  
+  <section class="hero">
+    <h1>What does your text feel?</h1>
+    <p class="subtitle">Multi-task sentiment analysis · 3 tasks · 1 model</p>
+    
+    <div class="input-container">
+      <textarea id="textInput" placeholder="Enter text to analyze..."></textarea>
+      
+      <div class="pills">
+        <div class="pill" onclick="populate('I absolutely love the new design, but the load time is completely unacceptable.')">"I absolutely love the new design, but..."</div>
+        <div class="pill" onclick="populate('Oh great, another update that breaks everything. Just what I needed today.')">"Oh great, another update..."</div>
+        <div class="pill" onclick="populate('The parcel arrived on Tuesday as expected. Box was intact.')">"The parcel arrived on Tuesday..."</div>
+      </div>
+      
+      <div class="action-row">
+        <div class="model-tag">DistilBERT · Fine-tuned on 4 datasets · 158M params</div>
+        <button class="primary" id="analyzeBtn" onclick="analyzeText()">
+          <span class="loader-dot"></span>
+          <span id="btnText">Analyse</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="results" id="resultsSection">
+    <div class="results-grid">
+      <div class="main-sentiment">
+        <div class="sentiment-label serif" id="resLabel">Positive</div>
+        <div class="confidence" id="resConfidence">94.2% confidence</div>
+        
+        <div class="score-bar-container"><div class="score-bar" id="scoreBar"></div></div>
+        
+        <div class="badges" id="badgesContainer"></div>
+        <div class="reasoning" id="resReasoning"></div>
+      </div>
+
+      <div class="tabs-container">
+        <div class="tab-headers">
+          <button class="tab-btn active" onclick="switchTab('tab-emotions', event)">EMOTIONS</button>
+          <button class="tab-btn" onclick="switchTab('tab-attention', event)">ATTENTION</button>
+          <button class="tab-btn" onclick="switchTab('tab-details', event)">DETAILS</button>
+        </div>
+        
+        <div class="tab-content active" id="tab-emotions"><div class="emotion-bars" id="emotionBars"></div></div>
+        
+        <div class="tab-content" id="tab-attention" style="display:none;">
+          <div class="attention-heatmap" id="attnHeatmap"></div>
+          <div class="attention-legend">
+            <span>Low impact</span><div class="legend-gradient"></div><span>High impact</span>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="tab-details" style="display:none;">
+          <pre class="json-output" id="jsonOutput"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="batch-section">
+    <h2 class="serif">Temporal Analysis</h2>
+    <div class="batch-input-row">
+      <textarea id="batchInput" placeholder="Enter multiple lines of text here... (one per line)"></textarea>
+      <button class="primary" id="batchBtn" onclick="analyzeBatch()" style="align-self: flex-start;">Analyze Batch</button>
+    </div>
+    <canvas id="timelineChart"></canvas>
+  </section>
+
+</div>
+<script src="main.js"></script>
+</body>
+</html>

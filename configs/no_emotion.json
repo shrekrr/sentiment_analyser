@@ -1,0 +1,12 @@
+{
+    "batch_size": 16,
+    "lr_encoder": 2e-5,
+    "lr_heads": 1e-4,
+    "epochs": 5,
+    "freeze_epochs": 1,
+    "lambda_sentiment": 1.0,
+    "lambda_emotion": 0.0,
+    "lambda_sarcasm": 0.5,
+    "checkpoint_dir": "checkpoints",
+    "experiment_name": "no_emotion"
+}
