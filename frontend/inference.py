@@ -22,8 +22,13 @@ class SentimentInference:
         self.model.to(self.device)
         self.model.eval()
 
-    def predict(self, text: str) -> dict:
-        inputs = self.tokenizer(text, max_length=128, padding=True, truncation=True, return_tensors="pt")
+    def predict(self, text: str, context: str = None) -> dict:
+        if context:
+            full_text = f"{context} [SEP] {text}"
+        else:
+            full_text = text
+            
+        inputs = self.tokenizer(full_text, max_length=128, padding=True, truncation=True, return_tensors="pt")
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
         
         with torch.no_grad():
@@ -44,7 +49,7 @@ class SentimentInference:
             sarc_conf, sarc_pred = torch.max(sarc_probs, dim=-1)
             
         # Attention - run through heatmap exporter
-        attention_data = get_attention_heatmap(self.model, self.tokenizer, text)
+        attention_data = get_attention_heatmap(self.model, self.tokenizer, full_text)
         contrastive_shift = self._detect_contrastive_shift(text)
         
         # Build sentiment dict
@@ -89,7 +94,12 @@ class SentimentInference:
         }
 
     def predict_batch(self, texts: list[str]) -> list[dict]:
-        return [self.predict(t) for t in texts]
+        results = []
+        context = None
+        for t in texts:
+            results.append(self.predict(text=t, context=context))
+            context = t
+        return results
 
     def _detect_contrastive_shift(self, text: str) -> bool:
         CONTRAST_WORDS = ["but", "however", "although", "yet",
